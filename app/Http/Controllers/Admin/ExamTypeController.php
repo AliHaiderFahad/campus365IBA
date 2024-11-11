@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ExamType;
+use App\Models\Subject;
 use Toastr;
 
 class ExamTypeController extends Controller
@@ -43,7 +44,10 @@ class ExamTypeController extends Controller
         $data['view'] = $this->view;
         $data['path'] = $this->path;
         $data['access'] = $this->access;
-        
+        $subjects = Subject::get();
+        $data['access'] = $this->access;
+        $data['subjects'] = $subjects;
+
         $data['rows'] = ExamType::orderBy('contribution', 'desc')->get();
 
         return view($this->view.'.index', $data);
@@ -67,6 +71,7 @@ class ExamTypeController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request;
         // Field Validation
         $request->validate([
             'title' => 'required|max:191|unique:exam_types,title',
@@ -79,7 +84,8 @@ class ExamTypeController extends Controller
         $examType->title = $request->title;
         $examType->marks = $request->marks;
         // $examType->contribution = $request->contribution;
-        $examType->description = $request->description;
+        // $examType->description = $request->description;
+        $examType->description = $request->subject;
         $examType->save();
 
 
@@ -131,6 +137,7 @@ class ExamTypeController extends Controller
         $examType->marks = $request->marks;
         // $examType->contribution = $request->contribution;
         $examType->description = $request->description;
+        $examType->description = $request->subject;
         $examType->status = $request->status;
         $examType->save();
 

@@ -56,7 +56,7 @@
 
                     <li class="list-group-item"><mark class="text-primary">{{ __('field_total_credit_hour') }} :</mark> {{ round($total_credits, 2) }}</li>
 
-                    <li class="list-group-item"><mark class="text-primary">{{ __('field_cumulative_gpa') }} :</mark> 
+                    <li class="list-group-item"><mark class="text-primary">{{ __('field_cumulative_gpa') }} :</mark>
                         @php
                         if($total_credits <= 0){
                             $total_credits = 1;
@@ -130,6 +130,7 @@
                                         <th>{{ __('field_credit_hour') }}</th>
                                         <th>{{ __('field_point') }}</th>
                                         <th>{{ __('field_grade') }}</th>
+                                        <th>{{ __('Performance') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -141,11 +142,12 @@
                                     @if($semester_item[1] == $item->semester->title && $semester_item[0] == $item->session->title)
 
                                     @foreach( $item->subjects as $subject )
+
                                     @php
                                         $semester_credits = $semester_credits + $subject->credit_hour;
                                         $subject_grade = null;
                                     @endphp
-                                    
+
                                     <tr>
                                         <td>{{ $subject->code }}</td>
                                         <td>
@@ -182,6 +184,16 @@
                                             @endif
                                         </td>
                                         <td>{{ $subject_grade ?? '' }}</td>
+
+                                        @php
+                                            $student = $row;
+                                            $exams = $item->exams;
+
+                                        @endphp
+
+                                        <td>{{$exams->where('subject_id',$subject->id)->sum('achieve_marks')}}/{{$exams->where('subject_id',$subject->id)->sum('marks')}}</td>
+
+
                                     </tr>
                                     @endforeach
 

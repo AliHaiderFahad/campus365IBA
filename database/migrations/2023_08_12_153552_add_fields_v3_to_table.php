@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('grades', function (Blueprint $table) {
-            $table->text('remark')->nullable();
-        });
+        // Schema::table('grades', function (Blueprint $table) {
+        //     $table->text('remark')->nullable();
+        // });
 
         Schema::table('exams', function (Blueprint $table) {
             $table->date('date')->nullable();
@@ -38,9 +38,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('grades', function (Blueprint $table) {
-            $table->dropColumn('remark');
-        });
+        // Schema::table('grades', function (Blueprint $table) {
+        //     $table->dropColumn('remark');
+        // });
 
         Schema::table('exams', function (Blueprint $table) {
             $table->dropColumn('date');

@@ -37,7 +37,7 @@ class SubjectMarkingController extends Controller
         $this->view = 'admin.subject-marking';
         $this->path = 'subject-marking';
         $this->access = 'subject';
-        
+
         $this->middleware('permission:'.$this->access.'-marking', ['only' => ['index','store']]);
         $this->middleware('permission:'.$this->access.'-result', ['only' => ['result']]);
     }
@@ -49,6 +49,7 @@ class SubjectMarkingController extends Controller
      */
     public function index(Request $request)
     {
+        // return $request;
         //
         $data['title'] = $this->title;
         $data['route'] = $this->route;
@@ -111,7 +112,7 @@ class SubjectMarkingController extends Controller
         $data['faculties'] = Faculty::where('status', '1')->orderBy('title', 'asc')->get();
         $data['examTypes'] = ExamType::where('status', '1')->orderBy('contribution', 'desc')->get();
         $data['resultContributions'] = ResultContribution::where('status', '1')->first();
-        
+
         if(!empty($request->faculty) && $request->faculty != '0'){
         $data['programs'] = Program::where('faculty_id', $faculty)->where('status', '1')->orderBy('title', 'asc')->get();}
 
@@ -200,7 +201,7 @@ class SubjectMarkingController extends Controller
             $enrolls->with('student')->whereHas('student', function ($query){
                 $query->orderBy('student_id', 'asc');
             });
-            
+
             $rows = $enrolls->get();
 
             // Array Sorting
@@ -216,7 +217,7 @@ class SubjectMarkingController extends Controller
         if(!empty($request->program) && !empty($request->session) && !empty($request->subject)){
 
             $attendances = StudentAttendance::where('id', '!=', null);
-            
+
             $attendances->with('studentEnroll')->whereHas('studentEnroll', function ($query) use ($program, $session, $semester, $section){
                 if($program != '0'){
                     $query->where('program_id', $program);
@@ -251,7 +252,7 @@ class SubjectMarkingController extends Controller
         if(!empty($request->program) && !empty($request->session) && !empty($request->subject)){
 
             $markings = SubjectMarking::where('subject_id', $subject);
-            
+
             $markings->with('studentEnroll')->whereHas('studentEnroll', function ($query) use ($program, $session, $semester, $section){
                 if($program != '0'){
                     $query->where('program_id', $program);
@@ -453,7 +454,7 @@ class SubjectMarkingController extends Controller
 
             // Marks
             $markings = SubjectMarking::where('subject_id', $subject);
-            
+
             $markings->with('studentEnroll')->whereHas('studentEnroll', function ($query) use ($program, $session, $semester, $section){
                 if($program != '0'){
                     $query->where('program_id', $program);

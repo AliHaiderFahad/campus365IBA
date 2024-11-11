@@ -22,6 +22,21 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="subject">{{ __('field_subject') }} <span>*</span></label>
+                        <select class="form-control subject" name="subject" id="subject" required>
+                            <option value="">{{ __('select') }}</option>
+                            @if(isset($subjects))
+                            @foreach( $subjects->sortBy('code') as $subject )
+                            <option value="{{ $subject->id }}">{{ $subject->code }} - {{ $subject->title }}</option>
+                            @endforeach
+                            @endif
+                        </select>
+                        <div class="invalid-feedback">
+                            {{ __('required_field') }} {{ __('field_subject') }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label for="marks" class="form-label">{{ __('field_marks') }} <span>*</span></label>
                         <input type="text" class="form-control autonumber" name="marks" id="marks" value="{{ round($row->marks, 2) }}" required>
 

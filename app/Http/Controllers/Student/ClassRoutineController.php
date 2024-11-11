@@ -58,7 +58,7 @@ class ClassRoutineController extends Controller
                         ->orderBy('start_time', 'asc')
                         ->get();
         }
-        
+
 
         return view($this->view.'.index', $data);
     }

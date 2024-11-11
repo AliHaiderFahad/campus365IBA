@@ -9,8 +9,9 @@
         <div class="row">
             @can($access.'-create')
             <div class="col-md-4">
-                <form class="needs-validation" novalidate action="{{ route($route.'.store') }}" method="post" enctype="multipart/form-data">
-                @csrf
+                <form class="needs-validation" novalidate action="{{ route($route.'.store') }}" method="post"
+                    enctype="multipart/form-data">
+                    @csrf
                     <div class="card">
                         <div class="card-header">
                             <h5>{{ __('btn_create') }} {{ $title }}</h5>
@@ -19,34 +20,56 @@
                             <!-- Form Start -->
                             <div class="form-group">
                                 <label for="title" class="form-label">{{ __('field_title') }} <span>*</span></label>
-                                <input type="text" class="form-control" name="title" id="title" value="{{ old('title') }}" required>
+                                <input type="text" class="form-control" name="title" id="title"
+                                    value="{{ old('title') }}" required>
 
                                 <div class="invalid-feedback">
-                                  {{ __('required_field') }} {{ __('field_title') }}
+                                    {{ __('required_field') }} {{ __('field_title') }}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="subject">{{ __('field_subject') }} <span>*</span></label>
+                                <select class="form-control subject" name="subject" id="subject" required>
+                                    <option value="">{{ __('select') }}</option>
+                                    @if(isset($subjects))
+                                    @foreach( $subjects->sortBy('code') as $subject )
+                                    <option value="{{ $subject->id }}">{{ $subject->code }} - {{ $subject->title }}</option>
+                                    @endforeach
+                                    @endif
+                                </select>
+                                <div class="invalid-feedback">
+                                    {{ __('required_field') }} {{ __('field_subject') }}
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="marks" class="form-label">{{ __('field_marks') }} <span>*</span></label>
-                                <input type="text" class="form-control autonumber" name="marks" id="marks" value="{{ old('marks') }}" required>
+                                <input type="text" class="form-control autonumber" name="marks" id="marks"
+                                    value="{{ old('marks') }}" required>
 
                                 <div class="invalid-feedback">
-                                  {{ __('required_field') }} {{ __('field_marks') }}
+                                    {{ __('required_field') }} {{ __('field_marks') }}
                                 </div>
                             </div>
 
+
+
                             {{-- <div class="form-group">
-                                <label for="contribution" class="form-label">{{ __('field_result_contribution') }} (%) <span>*</span></label>
-                                <input type="text" class="form-control autonumber" name="contribution" id="contribution" value="{{ old('contribution') ?? 0 }}" required>
+                                <label for="contribution" class="form-label">{{ __('field_result_contribution') }} (%)
+                                    <span>*</span></label>
+                                <input type="text" class="form-control autonumber" name="contribution" id="contribution"
+                                    value="{{ old('contribution') ?? 0 }}" required>
 
                                 <div class="invalid-feedback">
-                                  {{ __('required_field') }} {{ __('field_result_contribution') }}
+                                    {{ __('required_field') }} {{ __('field_result_contribution') }}
                                 </div>
                             </div> --}}
                             <!-- Form End -->
                         </div>
                         <div class="card-footer">
-                            <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> {{ __('btn_save') }}</button>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> {{ __('btn_save')
+                                }}</button>
                         </div>
                     </div>
                 </form>
@@ -60,7 +83,8 @@
                     <div class="card-block">
                         <!-- [ Data table ] start -->
                         <div class="table-responsive">
-                            <table id="basic-table" class="display table nowrap table-striped table-hover" style="width:100%">
+                            <table id="basic-table" class="display table nowrap table-striped table-hover"
+                                style="width:100%">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -72,15 +96,15 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                  @php
-                                      $total_marks = 0;
-                                      $total_contribution = 0;
-                                  @endphp
-                                  @foreach( $rows as $key => $row )
-                                  @php
-                                      $total_marks = $total_marks + $row->marks;
-                                      $total_contribution = $total_contribution + $row->contribution;
-                                  @endphp
+                                    @php
+                                    $total_marks = 0;
+                                    $total_contribution = 0;
+                                    @endphp
+                                    @foreach( $rows as $key => $row )
+                                    @php
+                                    $total_marks = $total_marks + $row->marks;
+                                    $total_contribution = $total_contribution + $row->contribution;
+                                    @endphp
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
                                         <td>{{ $row->title }}</td>
@@ -88,14 +112,17 @@
                                         <td>{{ round($row->contribution, 2) }} %</td>
                                         <td>
                                             @if( $row->status == 1 )
-                                            <span class="badge badge-pill badge-success">{{ __('status_active') }}</span>
+                                            <span class="badge badge-pill badge-success">{{ __('status_active')
+                                                }}</span>
                                             @else
-                                            <span class="badge badge-pill badge-danger">{{ __('status_inactive') }}</span>
+                                            <span class="badge badge-pill badge-danger">{{ __('status_inactive')
+                                                }}</span>
                                             @endif
                                         </td>
                                         <td>
                                             @can($access.'-edit')
-                                            <button type="button" class="btn btn-icon btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal-{{ $row->id }}">
+                                            <button type="button" class="btn btn-icon btn-primary btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#editModal-{{ $row->id }}">
                                                 <i class="far fa-edit"></i>
                                             </button>
                                             <!-- Include Edit modal -->
@@ -103,7 +130,8 @@
                                             @endcan
 
                                             @can($access.'-delete')
-                                            <button type="button" class="btn btn-icon btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $row->id }}">
+                                            <button type="button" class="btn btn-icon btn-danger btn-sm"
+                                                data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $row->id }}">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                             <!-- Include Delete modal -->
@@ -111,7 +139,7 @@
                                             @endcan
                                         </td>
                                     </tr>
-                                  @endforeach
+                                    @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
