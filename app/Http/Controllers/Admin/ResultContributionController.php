@@ -39,7 +39,7 @@ class ResultContributionController extends Controller
         $data['route'] = $this->route;
         $data['view'] = $this->view;
         $data['access'] = $this->access;
-        
+
         $data['row'] = ResultContribution::where('status', '1')->first();
         $data['exams'] = ExamType::orderBy('id', 'asc')->get();
 
@@ -75,7 +75,8 @@ class ResultContributionController extends Controller
                 $exam_contributions = $exam_contributions + $contribution;
             }
         }
-        if( ($exam_contributions + $request->attendances + $request->assignments + $request->activities) != 100 ) {
+        // if( ($exam_contributions + $request->attendances + $request->assignments + $request->activities) != 100 ) {
+        if(true) {
 
             Toastr::error(__('msg_your_contribution_is_not_correct'), __('msg_error'));
 
