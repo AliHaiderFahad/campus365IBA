@@ -159,7 +159,7 @@ Route::middleware(['auth:web', 'XSS'])->name('admin.')->namespace('Admin')->pref
     Route::get('teacher/course-details', 'ClassRoutineController@course_details'); 
     Route::get('teacher/attendance', 'StudentAttendanceController@attendance_view')->name('teacher.attendance'); 
     Route::post('teacher/attendance/store', 'StudentAttendanceController@attendance_store')->name('teacher.attendance.store'); 
-    Route::get('teacher/attendance-report', 'StudentAttendanceController@attendance_report')->name('teacher.attendance.report'); 
+    Route::get('teacher/attendance-report', 'StudentAttendanceController@attendance_report')->name('class-routine-teacher'); 
 
     // Exam Routes
     Route::resource('exam/exam-attendance', 'ExamAttendanceController');

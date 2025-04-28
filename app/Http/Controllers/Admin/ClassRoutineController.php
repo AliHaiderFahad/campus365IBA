@@ -528,11 +528,14 @@ class ClassRoutineController extends Controller
             $data['selected_staff'] = $request->teacher;
 
             $session = Session::where('status', '1')->where('current', '1')->first();
+
+            if(isset($session)){
             $data['rows'] = ClassRoutine::where('status', '1')
-            // ->where('session_id', $session->id)
-            ->where('teacher_id', $request->teacher)
-            ->orderBy('start_time', 'asc')
-            ->get();
+                        ->where('session_id', $session->id)
+                        ->where('teacher_id', $request->teacher)
+                        ->orderBy('start_time', 'asc')
+                        ->get();
+            }
         }
         else {
             $data['selected_staff'] = Null;
