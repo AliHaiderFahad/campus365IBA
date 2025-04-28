@@ -87,6 +87,7 @@ Route::middleware(['auth:web', 'XSS'])->name('admin.')->namespace('Admin')->pref
     // Dashboard Route
     Route::get('/', 'DashboardController@index')->name('dashboard.index');
     Route::get('dashboard', 'DashboardController@index')->name('dashboard.index');
+    
 
 
 
@@ -153,7 +154,12 @@ Route::middleware(['auth:web', 'XSS'])->name('admin.')->namespace('Admin')->pref
     Route::get('academic/routine-setting/exam', 'RoutineSettingController@exam')->name('routine-setting.exam');
     Route::post('academic/routine-setting/store', 'RoutineSettingController@store')->name('routine-setting.store');
 
-
+    // Ali 
+    Route::get('teacher/dashboard', 'ClassRoutineController@teacher_dashboard_data'); 
+    Route::get('teacher/course-details', 'ClassRoutineController@course_details'); 
+    Route::get('teacher/attendance', 'StudentAttendanceController@attendance_view')->name('teacher.attendance'); 
+    Route::post('teacher/attendance/store', 'StudentAttendanceController@attendance_store')->name('teacher.attendance.store'); 
+    Route::get('teacher/attendance-report', 'StudentAttendanceController@attendance_report')->name('teacher.attendance.report'); 
 
     // Exam Routes
     Route::resource('exam/exam-attendance', 'ExamAttendanceController');

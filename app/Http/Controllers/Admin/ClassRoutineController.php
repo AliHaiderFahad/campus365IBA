@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ClassRoutine;
+use App\Models\AssignedCourse;
 use Illuminate\Http\Request;
 use App\Models\PrintSetting;
 use App\Models\ClassRoom;
@@ -345,6 +346,18 @@ class ClassRoutineController extends Controller
                     $classRoutine->day= $day;
                     $classRoutine->save();
 
+
+                    \App\Models\AssignedCourse::firstOrCreate(
+                        [
+                            'teacher_id'  => $data['teacher'][$j],
+                            'subject_id'  => $data['subject'][$j],
+                            'program_id'  => $program,
+                            'session_id'  => $session,
+                            'semester_id' => $semester,
+                            'section_id'  => $section,
+                        ]
+                    );
+
                     Toastr::success(__('msg_updated_successfully'), __('msg_success'));
                 }
                 else{
@@ -367,6 +380,18 @@ class ClassRoutineController extends Controller
                         $classRoutine->day= $day;
                         $classRoutine->save();
 
+
+                        \App\Models\AssignedCourse::firstOrCreate(
+                            [
+                                'teacher_id'  => $data['teacher'][$j],
+                                'subject_id'  => $data['subject'][$j],
+                                'program_id'  => $program,
+                                'session_id'  => $session,
+                                'semester_id' => $semester,
+                                'section_id'  => $section,
+                            ]
+                        );
+
                         Toastr::success(__('msg_updated_successfully'), __('msg_success'));
                     }
                    
@@ -379,7 +404,43 @@ class ClassRoutineController extends Controller
             for($i = 0; $i < $delete_routine_count; $i++)
             {
                 $classRoutine = ClassRoutine::find($data['delete_routine'][$i]);
-                $classRoutine->delete();
+
+                if ($classRoutine) {
+                    // Store assignment identifiers before deletion
+                    $teacherId  = $classRoutine->teacher_id;
+                    $subjectId  = $classRoutine->subject_id;
+                    $programId  = $classRoutine->program_id;
+                    $sessionId  = $classRoutine->session_id;
+                    $semesterId = $classRoutine->semester_id;
+                    $sectionId  = $classRoutine->section_id;
+        
+                    $classRoutine->delete();
+                    Toastr::success(__('msg_deleted_successfully'), __('msg_success'));
+        
+                    // Check if any other routines exist for this assignment
+                    $stillUsed = ClassRoutine::where([
+                        ['teacher_id', '=', $teacherId],
+                        ['subject_id', '=', $subjectId],
+                        ['program_id', '=', $programId],
+                        ['session_id', '=', $sessionId],
+                        ['semester_id', '=', $semesterId],
+                        ['section_id', '=', $sectionId],
+                    ])->exists();
+        
+                    // If not used, remove from assigned_courses
+                    if (!$stillUsed) {
+                        \App\Models\AssignedCourse::where([
+                            ['teacher_id', '=', $teacherId],
+                            ['subject_id', '=', $subjectId],
+                            ['program_id', '=', $programId],
+                            ['session_id', '=', $sessionId],
+                            ['semester_id', '=', $semesterId],
+                            ['section_id', '=', $sectionId],
+                        ])->delete();
+                    }
+                }
+
+               
 
                 Toastr::success(__('msg_deleted_successfully'), __('msg_success'));
             }}
@@ -399,11 +460,41 @@ class ClassRoutineController extends Controller
      */
     public function destroy(ClassRoutine $classRoutine)
     {
-        // Delete Data
+        // Store assignment keys before deleting the routine
+        $teacherId  = $classRoutine->teacher_id;
+        $subjectId  = $classRoutine->subject_id;
+        $programId  = $classRoutine->program_id;
+        $sessionId  = $classRoutine->session_id;
+        $semesterId = $classRoutine->semester_id;
+        $sectionId  = $classRoutine->section_id;
+    
+        // Delete the routine
         $classRoutine->delete();
-
+    
+        // Check if any other class routines use the same assignment
+        $stillUsed = ClassRoutine::where([
+            ['teacher_id', '=', $teacherId],
+            ['subject_id', '=', $subjectId],
+            ['program_id', '=', $programId],
+            ['session_id', '=', $sessionId],
+            ['semester_id', '=', $semesterId],
+            ['section_id', '=', $sectionId],
+        ])->exists();
+    
+        // Delete from assigned_courses if it's no longer in use
+        if (!$stillUsed) {
+            \App\Models\AssignedCourse::where([
+                ['teacher_id', '=', $teacherId],
+                ['subject_id', '=', $subjectId],
+                ['program_id', '=', $programId],
+                ['session_id', '=', $sessionId],
+                ['semester_id', '=', $semesterId],
+                ['section_id', '=', $sectionId],
+            ])->delete();
+        }
+    
         Toastr::success(__('msg_deleted_successfully'), __('msg_success'));
-
+    
         return redirect()->back();
     }
 
@@ -414,6 +505,8 @@ class ClassRoutineController extends Controller
      */
     public function teacher(Request $request)
     {
+
+     
         //
         $data['title'] = trans_choice('module_teacher_routine', 1);
         $data['route'] = $this->route;
@@ -435,14 +528,11 @@ class ClassRoutineController extends Controller
             $data['selected_staff'] = $request->teacher;
 
             $session = Session::where('status', '1')->where('current', '1')->first();
-
-            if(isset($session)){
             $data['rows'] = ClassRoutine::where('status', '1')
-                        ->where('session_id', $session->id)
-                        ->where('teacher_id', $request->teacher)
-                        ->orderBy('start_time', 'asc')
-                        ->get();
-            }
+            // ->where('session_id', $session->id)
+            ->where('teacher_id', $request->teacher)
+            ->orderBy('start_time', 'asc')
+            ->get();
         }
         else {
             $data['selected_staff'] = Null;
@@ -450,6 +540,65 @@ class ClassRoutineController extends Controller
 
         return view($this->view.'.teacher', $data);
     }
+
+    public function teacher_dashboard_data(Request $request)
+    {
+
+
+       
+
+        // $data['title'] = trans_choice('module_teacher_routine', 1);
+        $data['title'] = 'Teacher Dashboard';
+        $data['route'] = $this->route;
+        $data['view'] = $this->view;
+        $data['path'] = $this->path;
+        $data['access'] = $this->access;
+
+        $teacher_id = auth()->user()->id;
+
+        $teachers = User::where('status', '1')->where('id',$teacher_id);
+        $teachers->with('roles')->whereHas('roles', function ($query){
+            $query->where('slug', 'teacher');
+        });
+        $data['teacher'] = $teachers->orderBy('staff_id', 'asc')->get()->first();
+
+        $data['rows'] = AssignedCourse::where('teacher_id', $teacher_id)
+                        ->orderBy('id', 'desc')
+                        ->get();
+
+                       // dd($data['rows']);
+
+        return view($this->view.'.teacher-dashboard', $data);  
+
+    }
+    public function course_details(Request $request)
+    {
+
+        //dd(1); 
+      
+        $data['title'] = 'Course Details';
+        $data['route'] = $this->route;
+        $data['view'] = $this->view;
+        $data['path'] = $this->path;
+        $data['access'] = $this->access;
+
+        $teacher_id = auth()->user()->id;
+
+        $teachers = User::where('status', '1')->where('id',$teacher_id);
+        $teachers->with('roles')->whereHas('roles', function ($query){
+            $query->where('slug', 'teacher');
+        });
+        $data['teacher'] = $teachers->orderBy('staff_id', 'asc')->get()->first();
+
+        $data['details'] = AssignedCourse::where('teacher_id',$teacher_id)->where('id',$request->id)->get()->first();
+        $details = $data['details'];
+        $data['rows'] = ClassRoutine::where('teacher_id',$teacher_id)->where('program_id',$details->program_id)->where('session_id',$details->session_id)->where('semester_id',$details->semester_id)->where('section_id',$details->section_id)->where('subject_id',$details->subject_id)
+        ->orderBy('start_time', 'asc')
+        ->get();
+        return view($this->view.'.teacher-course-details', $data); 
+    }
+
+    
 
     /**
      * Display a listing of the resource.

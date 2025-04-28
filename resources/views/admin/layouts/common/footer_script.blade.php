@@ -113,12 +113,17 @@
 
             // Number Musk
             // $('.autonumber').autoNumeric('init');
-            new AutoNumeric('.autonumber', {
-                minimumValue : '0',
-                maximumValue : '999999999',
-                decimalPlaces : 0,
-                decimalCharacter : '.',
-                digitGroupSeparator : '',
+            
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.autonumber').forEach(el => {
+                new AutoNumeric(el, {
+                    minimumValue: '0',
+                    maximumValue: '999999999',
+                    decimalPlaces: 0,
+                    decimalCharacter: '.',
+                    digitGroupSeparator: '',
+                });
             });
         });
     </script>

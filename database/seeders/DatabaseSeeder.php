@@ -12,24 +12,27 @@ class DatabaseSeeder extends Seeder
      * @return void
      */
     public function run() {
-        $this->call(PermissionSeeder::class);
-        $this->call(AdminSeeder::class);
-        $this->call(SettingSeeder::class);
-        $this->call(LanguageSeeder::class);
-        $this->call(SMSSettingSeeder::class);
-        $this->call(MailSettingSeeder::class);
+        // $this->call(PermissionSeeder::class);
+        // $this->call(AdminSeeder::class);
+        // $this->call(SettingSeeder::class);
+        // $this->call(LanguageSeeder::class);
+        // $this->call(SMSSettingSeeder::class);
+        // $this->call(MailSettingSeeder::class);
         
-        $this->call(SessionSeeder::class);
-        $this->call(FeesCategorySeeder::class);
-        $this->call(StatusTypeSeeder::class);
-        $this->call(TaxSettingSeeder::class);
-        $this->call(WorkShiftSeeder::class);
-        $this->call(GradeSeeder::class);
-        $this->call(LeaveTypeSeeder::class);
-        $this->call(ExamTypeSeeder::class);
-        $this->call(ResultContributionSeeder::class);
+        // $this->call(SessionSeeder::class);
+        // $this->call(FeesCategorySeeder::class);
+        // $this->call(StatusTypeSeeder::class);
+        // $this->call(TaxSettingSeeder::class);
+        // $this->call(WorkShiftSeeder::class);
+        // $this->call(GradeSeeder::class);
+        // $this->call(LeaveTypeSeeder::class);
+        // $this->call(ExamTypeSeeder::class);
+        // $this->call(ResultContributionSeeder::class);
         
-        $this->call(FieldSeeder::class);
-        $this->call(SocialSeeder::class);
+        // $this->call(FieldSeeder::class);
+        // $this->call(SocialSeeder::class);
+        // $this->call(AcademicFlowSeeder::class);
+        // $this->call(SubjectSeeder::class);
+        $this->call(StudentSeeder::class);
     }
 }
